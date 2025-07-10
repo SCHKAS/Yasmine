@@ -188,6 +188,25 @@
                     </table>
                 </div>
 
+                <!-- Summary Section -->
+                <div class="mt-6 p-4 bg-yellow-100 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Overzicht</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-lg">
+                        <div class="flex justify-between">
+                            <span class="font-medium text-gray-700">Totaal Inkomsten:</span>
+                            <span id="totalIncomeDisplay" class="font-bold text-green-700">€0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium text-gray-700">Totaal Uitgaven:</span>
+                            <span id="totalExpensesDisplay" class="font-bold text-red-700">€0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium text-gray-700">Kassaldo:</span>
+                            <span id="cashBalanceDisplay" class="font-bold text-gray-900">€0.00</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Back to Home Button -->
                 <div class="mt-6 text-center">
                     <button id="backToIndexFromReports"
@@ -465,8 +484,15 @@
 
             if (dataToRender.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-gray-500">Geen transacties gevonden.</td></tr>`;
+                // Reset summary totals if no transactions
+                document.getElementById('totalIncomeDisplay').textContent = '€0.00';
+                document.getElementById('totalExpensesDisplay').textContent = '€0.00';
+                document.getElementById('cashBalanceDisplay').textContent = '€0.00';
                 return;
             }
+
+            let totalIncome = 0;
+            let totalExpenses = 0;
 
             dataToRender.forEach(t => {
                 const row = document.createElement('tr');
@@ -474,6 +500,13 @@
                 const date = t.date ? new Date(t.date.seconds * 1000).toLocaleDateString('nl-BE') : 'N/A';
                 const amountClass = t.type === 'Inkomsten' ? 'text-green-600' : 'text-red-600';
                 const amountSign = t.type === 'Inkomsten' ? '+' : '-';
+
+                // Calculate totals
+                if (t.type === 'Inkomsten') {
+                    totalIncome += t.amount;
+                } else {
+                    totalExpenses += t.amount;
+                }
 
                 row.innerHTML = `
                     <td class="py-3 px-4 text-sm">${date}</td>
@@ -497,6 +530,13 @@
                 `;
                 tableBody.appendChild(row);
             });
+
+            const cashBalance = totalIncome - totalExpenses;
+
+            // Update the summary display
+            document.getElementById('totalIncomeDisplay').textContent = `€${totalIncome.toFixed(2)}`;
+            document.getElementById('totalExpensesDisplay').textContent = `€${totalExpenses.toFixed(2)}`;
+            document.getElementById('cashBalanceDisplay').textContent = `€${cashBalance.toFixed(2)}`;
         };
 
         window.filterReports = () => {
