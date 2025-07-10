@@ -2,18 +2,18 @@
   "name": "Yasmine Kasboek",
   "short_name": "Yasmine",
   "description": "Een eenvoudig kasboek om inkomsten en uitgaven bij te houden.",
-  "start_url": "/yasmine-kasboek.html",
+  "start_url": "/Yasmine/yasmine-kasboek.html",
   "display": "standalone",
   "background_color": "#FFFACD",
   "theme_color": "#FEE39E",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/Yasmine/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/Yasmine/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

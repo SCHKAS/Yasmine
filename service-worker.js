@@ -1,11 +1,10 @@
 const CACHE_NAME = 'yasmine-cashbook-v1';
 const urlsToCache = [
-  '/yasmine-kasboek.html',
-  '/style.css', // Als je een aparte CSS-file hebt
-  '/service-worker.js',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/Yasmine/yasmine-kasboek.html',
+  '/Yasmine/service-worker.js',
+  '/Yasmine/manifest.json',
+  '/Yasmine/icons/icon-192x192.png',
+  '/Yasmine/icons/icon-512x512.png',
   'https://cdn.tailwindcss.com' // Tailwind CSS CDN
   // Voeg hier alle andere assets toe die je offline beschikbaar wilt maken
 ];
