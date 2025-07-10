@@ -2,7 +2,7 @@
   "name": "Yasmine Kasboek",
   "short_name": "Yasmine",
   "description": "Een eenvoudig kasboek om inkomsten en uitgaven bij te houden.",
-  "start_url": "/Yasmine/yasmine-kasboek.html",
+  "start_url": "/Yasmine/index.html",
   "display": "standalone",
   "background_color": "#FFFACD",
   "theme_color": "#FEE39E",
