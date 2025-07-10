@@ -227,49 +227,16 @@
         let userId = 'anonymous'; // Default to anonymous
         let transactions = []; // Array to store all transactions
 
-        // Firebase configuration and initialization
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase app
-        if (Object.keys(firebaseConfig).length > 0) {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-
-            // Authenticate user
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    console.log("User authenticated:", userId);
-                    // Load transactions after authentication
-                    loadTransactions();
-                } else {
-                    try {
-                        if (initialAuthToken) {
-                            await signInWithCustomToken(auth, initialAuthToken);
-                            console.log("Signed in with custom token.");
-                        } else {
-                            await signInAnonymously(auth);
-                            console.log("Signed in anonymously.");
-                        }
-                    } catch (error) {
-                        console.error("Firebase authentication error:", error);
-                        // Fallback to anonymous if custom token fails
-                        await signInAnonymously(auth);
-                        console.log("Signed in anonymously after error.");
-                    }
-                }
-            });
-        } else {
-            console.error("Firebase config not found. Data persistence will not work.");
-            // If Firebase config is missing, mock userId and allow app to run without persistence
-            userId = crypto.randomUUID();
-            console.log("Running without Firebase persistence. User ID:", userId);
-            // Still call loadTransactions to initialize empty array and render page
-            loadTransactions();
-        }
+        // Define Firebase configuration directly for GitHub Pages
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNW6FnnOZN8FoGFQg14L753FuJEtxaptA",
+            authDomain: "yasmine-kasboek.firebaseapp.com",
+            projectId: "yasmine-kasboek",
+            storageBucket: "yasmine-kasboek.firebasestorage.app",
+            messagingSenderId: "758318284384",
+            appId: "1:758318284384:web:78918701087c570c360d05",
+            measurementId: "G-T48E0K4QEM"
+        };
 
         // Function to get the correct Firestore collection path
         const getTransactionsCollection = () => {
@@ -278,7 +245,8 @@
                 return null;
             }
             // Using private data path as per instructions
-            return collection(db, `artifacts/${appId}/users/${userId}/transactions`);
+            // Note: __app_id is not available on GitHub Pages, so we use projectId
+            return collection(db, `artifacts/${firebaseConfig.projectId}/users/${userId}/transactions`);
         };
 
         // Function to load transactions from Firestore
@@ -353,8 +321,6 @@
                 window.showMessage('Fout bij verwijderen van transactie.', 'error');
             }
         };
-
-        // --- UI Logic ---
 
         // Function to show a specific page
         window.showPage = (pageId) => {
@@ -475,7 +441,7 @@
                     document.getElementById('typeExpense').checked = true;
                 }
                 // Trigger change event to update visible fields
-                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(new Event('change'));
+                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(New Event('change'));
 
                 document.getElementById('name').value = transaction.name;
                 document.getElementById('amount').value = transaction.amount;
@@ -594,13 +560,38 @@
 
         // Initial setup when the window loads
         window.onload = () => {
+            // Initialize Firebase app
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Authenticate user
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("User authenticated:", userId);
+                    // Load transactions after authentication
+                    loadTransactions();
+                } else {
+                    try {
+                        // Use a dummy token if initialAuthToken is not available (e.g., on GitHub Pages)
+                        // This is a fallback to ensure authentication flow doesn't block the app.
+                        // For production, you'd typically have proper user sign-up/login.
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously.");
+                    } catch (error) {
+                        console.error("Firebase authentication error:", error);
+                    }
+                }
+                // Display user ID for debugging/identification
+                const userIdDisplay = document.getElementById('userIdDisplay');
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `Gebruikers ID: ${userId}`;
+                }
+            });
+
             window.setupInputPage();
             window.showPage('indexPage'); // Start on the index page
-            // Display user ID for debugging/identification
-            const userIdDisplay = document.getElementById('userIdDisplay');
-            if (userIdDisplay) {
-                userIdDisplay.textContent = `Gebruikers ID: ${userId}`;
-            }
         };
     </script>
 </body>

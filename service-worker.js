@@ -1,12 +1,11 @@
 const CACHE_NAME = 'yasmine-cashbook-v1';
 const urlsToCache = [
-  '/Yasmine/yasmine-kasboek.html',
+  '/Yasmine/index.html', // Hernoemd van yasmine-kasboek.html
   '/Yasmine/service-worker.js',
   '/Yasmine/manifest.json',
   '/Yasmine/icons/icon-192x192.png',
-  '/Yasmine/icons/icon-512x512.png',
-  'https://cdn.tailwindcss.com' // Tailwind CSS CDN
-  // Voeg hier alle andere assets toe die je offline beschikbaar wilt maken
+  '/Yasmine/icons/icon-512x512.png'
+  // Tailwind CSS CDN verwijderd vanwege CORS-beperkingen
 ];
 
 self.addEventListener('install', (event) => {
