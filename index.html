@@ -245,8 +245,8 @@
                 return null;
             }
             // Using private data path as per instructions
-            // Note: __app_id is not available on GitHub Pages, so we use projectId
-            return collection(db, `artifacts/${firebaseConfig.projectId}/users/${userId}/transactions`);
+            // CRUCIAL FIX: Use firebaseConfig.appId instead of projectId
+            return collection(db, `artifacts/${firebaseConfig.appId}/users/${userId}/transactions`);
         };
 
         // Function to load transactions from Firestore
@@ -443,7 +443,7 @@
                     document.getElementById('typeExpense').checked = true;
                 }
                 // Trigger change event to update visible fields
-                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(new Event('change')); // Corrected: new Event
+                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(new Event('change'));
 
                 document.getElementById('name').value = transaction.name;
                 document.getElementById('amount').value = transaction.amount;
