@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yasmine - Kasboek</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PWA Manifest en Theme Color -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FEE39E">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFACD; /* Light pastel yellow */
+        }
+        .card-button {
+            transition: transform 0.2s ease-in-out;
+        }
+        .card-button:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+
+    <!-- Message Box -->
+    <div id="messageBox" class="hidden fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-sm font-medium z-50"></div>
+
+    <!-- User ID Display -->
+    <div id="userIdDisplay" class="text-sm text-gray-600 mb-4"></div>
+
+    <!-- Main Content Area -->
+    <div class="w-full max-w-4xl bg-white p-8 rounded-xl shadow-lg">
+
+        <!-- Application Name -->
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-10">Yasmine</h1>
+
+        <!-- Pages Container -->
+        <div id="pagesContainer">
+
+            <!-- Index Page -->
+            <div id="indexPage" class="page flex flex-col items-center justify-center space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+                    <!-- Kasboek Button -->
+                    <button onclick="console.log('Kasboek button clicked'); showPage('inputPage')" class="card-button flex flex-col items-center justify-center p-8 bg-yellow-200 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-yellow-800 mb-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 110-2h1a1 1 0 110 2H4zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-2xl font-semibold text-yellow-900">Kasboek</span>
+                    </button>
+
+                    <!-- Rapporten Button -->
+                    <button onclick="console.log('Rapporten button clicked'); showPage('reportsPage')" class="card-button flex flex-col items-center justify-center p-8 bg-yellow-200 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-yellow-800 mb-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-2xl font-semibold text-yellow-900">Rapporten</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input Page -->
+            <div id="inputPage" class="page hidden p-6">
+                <h2 id="formTitle" class="text-3xl font-bold text-gray-800 mb-6 text-center">Nieuwe Transactie</h2>
+                <form id="transactionForm" class="space-y-6">
+                    <input type="hidden" id="transactionId">
+
+                    <!-- Type Selection -->
+                    <div>
+                        <label class="block text-gray-700 text-lg font-medium mb-2">Type:</label>
+                        <div class="flex space-x-6">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="transactionType" value="Inkomsten" id="typeIncome" class="form-radio text-yellow-600 h-5 w-5" checked>
+                                <span class="ml-2 text-gray-900 text-base">Inkomsten</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="transactionType" value="Uitgaven" id="typeExpense" class="form-radio text-yellow-600 h-5 w-5">
+                                <span class="ml-2 text-gray-900 text-base">Uitgaven</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Common Fields -->
+                    <div>
+                        <label for="name" class="block text-gray-700 text-lg font-medium mb-2">Naam:</label>
+                        <input type="text" id="name" name="name" required
+                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-base">
+                    </div>
+
+                    <div>
+                        <label for="amount" class="block text-gray-700 text-lg font-medium mb-2">Bedrag (€):</label>
+                        <input type="number" id="amount" name="amount" step="0.01" required
+                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-base">
+                    </div>
+
+                    <!-- Income Specific Fields -->
+                    <div id="incomeFields">
+                        <div>
+                            <label for="treatment" class="block text-gray-700 text-lg font-medium mb-2">Behandeling:</label>
+                            <input type="text" id="treatment" name="treatment"
+                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-base">
+                        </div>
+                        <div>
+                            <label for="paymentMethod" class="block text-gray-700 text-lg font-medium mb-2">Betaalmethode:</label>
+                            <select id="paymentMethod" name="paymentMethod"
+                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500 sm:text-base">
+                                <option value="">Selecteer...</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Payconiq/BC">Payconiq/BC</option>
+                                <option value="Bankoverschrijving">Bankoverschrijving</option>
+                                <option value="Creditcard">Creditcard</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Expense Specific Fields (currently empty as only name/amount are common) -->
+                    <div id="expenseFields" class="hidden">
+                        <!-- No extra fields for expenses as per requirements, but kept for future expansion -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" onclick="showPage('indexPage')"
+                                class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-md shadow-sm hover:bg-gray-300 transition-colors duration-200">
+                            Terug
+                        </button>
+                        <button type="button" id="cancelEdit" class="hidden px-6 py-3 bg-red-500 text-white font-semibold rounded-md shadow-sm hover:bg-red-600 transition-colors duration-200">
+                            Annuleren
+                        </button>
+                        <button type="submit"
+                                class="px-6 py-3 bg-yellow-600 text-white font-semibold rounded-md shadow-sm hover:bg-yellow-700 transition-colors duration-200">
+                            Opslaan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reportsPage" class="page hidden p-6">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Rapporten</h2>
+
+                <!-- Filter Section -->
+                <div class="mb-6 p-4 bg-yellow-100 rounded-lg shadow-sm flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+                    <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                        <label for="startDate" class="text-gray-700 font-medium whitespace-nowrap">Van:</label>
+                        <input type="date" id="startDate"
+                               class="px-3 py-2 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm">
+                        <label for="endDate" class="text-gray-700 font-medium whitespace-nowrap">Tot:</label>
+                        <input type="date" id="endDate"
+                               class="px-3 py-2 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm">
+                        <button onclick="filterReports()"
+                                class="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-md shadow-sm hover:bg-yellow-700 transition-colors duration-200 w-full sm:w-auto">
+                            Filter
+                        </button>
+                    </div>
+                    <div class="flex space-x-2 w-full sm:w-auto justify-end">
+                        <button onclick="exportToXLSX()"
+                                class="px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 transition-colors duration-200">
+                            Export XLSX
+                        </button>
+                        <button onclick="exportToCSV()"
+                                class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 transition-colors duration-200">
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reports Table -->
+                <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+                    <table id="reportsTable" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Datum</th>
+                                <th scope="col" class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Naam</th>
+                                <th scope="col" class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Behandeling</th>
+                                <th scope="col" class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bedrag</th>
+                                <th scope="col" class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Betaalmethode</th>
+                                <th scope="col" class="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acties</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Rows will be dynamically added here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Back to Home Button -->
+                <div class="mt-6 text-center">
+                    <button onclick="showPage('indexPage')"
+                            class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-md shadow-sm hover:bg-gray-300 transition-colors duration-200">
+                        Terug naar Home
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Service Worker Registratie -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker geregistreerd met scope:', registration.scope);
+            })
+            .catch(error => {
+              console.error('Service Worker registratie mislukt:', error);
+            });
+        });
+      }
+    </script>
+    <!-- Firebase SDKs en app-logica -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables for Firebase
+        let app;
+        let db;
+        let auth;
+        let userId = 'anonymous'; // Default to anonymous
+        let transactions = []; // Array to store all transactions
+
+        // Firebase configuration and initialization
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialize Firebase app
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Authenticate user
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("User authenticated:", userId);
+                    // Load transactions after authentication
+                    loadTransactions();
+                } else {
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                            console.log("Signed in with custom token.");
+                        } else {
+                            await signInAnonymously(auth);
+                            console.log("Signed in anonymously.");
+                        }
+                    } catch (error) {
+                        console.error("Firebase authentication error:", error);
+                        // Fallback to anonymous if custom token fails
+                        await signInAnonymously(auth);
+                        console.log("Signed in anonymously after error.");
+                    }
+                }
+            });
+        } else {
+            console.error("Firebase config not found. Data persistence will not work.");
+            // If Firebase config is missing, mock userId and allow app to run without persistence
+            userId = crypto.randomUUID();
+            console.log("Running without Firebase persistence. User ID:", userId);
+            // Still call loadTransactions to initialize empty array and render page
+            loadTransactions();
+        }
+
+        // Function to get the correct Firestore collection path
+        const getTransactionsCollection = () => {
+            if (!db) {
+                console.error("Firestore not initialized.");
+                return null;
+            }
+            // Using private data path as per instructions
+            return collection(db, `artifacts/${appId}/users/${userId}/transactions`);
+        };
+
+        // Function to load transactions from Firestore
+        const loadTransactions = () => {
+            const transactionsCol = getTransactionsCollection();
+            if (!transactionsCol) return;
+
+            // Use onSnapshot for real-time updates
+            onSnapshot(transactionsCol, (snapshot) => {
+                const fetchedTransactions = [];
+                snapshot.forEach(doc => {
+                    fetchedTransactions.push({ id: doc.id, ...doc.data() });
+                });
+                // Sort transactions by date descending
+                transactions = fetchedTransactions.sort((a, b) => b.date.toDate().getTime() - a.date.toDate().getTime());
+                console.log("Transactions loaded:", transactions);
+                renderReportsTable(); // Re-render reports table whenever data changes
+            }, (error) => {
+                console.error("Error loading transactions:", error);
+            });
+        };
+
+        // Function to save a new transaction
+        window.saveTransaction = async (transactionData) => {
+            const transactionsCol = getTransactionsCollection();
+            if (!transactionsCol) return;
+
+            try {
+                // Add a timestamp
+                transactionData.date = new Date();
+                await addDoc(transactionsCol, transactionData);
+                console.log("Transaction saved:", transactionData);
+                showMessage('Transactie succesvol opgeslagen!', 'success');
+                clearInputForm(); // Clear the form after saving
+                showPage('reportsPage'); // Go to reports page after saving
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                showMessage('Fout bij opslaan van transactie.', 'error');
+            }
+        };
+
+        // Function to update an existing transaction
+        window.updateTransaction = async (id, transactionData) => {
+            const transactionsCol = getTransactionsCollection();
+            if (!transactionsCol) return;
+
+            try {
+                const transactionRef = doc(transactionsCol, id);
+                await updateDoc(transactionRef, transactionData);
+                console.log("Transaction updated:", id, transactionData);
+                showMessage('Transactie succesvol bijgewerkt!', 'success');
+                clearInputForm(); // Clear the form after updating
+                showPage('reportsPage'); // Go to reports page after updating
+            } catch (e) {
+                console.error("Error updating document: ", e);
+                showMessage('Fout bij bijwerken van transactie.', 'error');
+            }
+        };
+
+        // Function to delete a transaction
+        window.deleteTransaction = async (id) => {
+            const transactionsCol = getTransactionsCollection();
+            if (!transactionsCol) return;
+
+            try {
+                const transactionRef = doc(transactionsCol, id);
+                await deleteDoc(transactionRef);
+                console.log("Transaction deleted:", id);
+                showMessage('Transactie succesvol verwijderd!', 'success');
+            } catch (e) {
+                console.error("Error deleting document: ", e);
+                showMessage('Fout bij verwijderen van transactie.', 'error');
+            }
+        };
+
+        // --- UI Logic ---
+
+        // Function to show a specific page
+        window.showPage = (pageId) => {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+
+            // Specific actions for pages
+            if (pageId === 'reportsPage') {
+                renderReportsTable();
+            } else if (pageId === 'inputPage') {
+                // Clear form when navigating to input page, unless it's for editing
+                if (!document.getElementById('transactionId').value) {
+                    clearInputForm();
+                }
+            }
+        };
+
+        // Function to display messages to the user
+        window.showMessage = (message, type) => {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            }
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000);
+        };
+
+        // --- Input Page Logic ---
+        window.setupInputPage = () => {
+            const typeRadios = document.querySelectorAll('input[name="transactionType"]');
+            const incomeFields = document.getElementById('incomeFields');
+            const expenseFields = document.getElementById('expenseFields');
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+
+            typeRadios.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    if (event.target.value === 'Inkomsten') {
+                        incomeFields.classList.remove('hidden');
+                        expenseFields.classList.add('hidden');
+                        paymentMethodSelect.setAttribute('required', 'required'); // Make payment method required for income
+                    } else {
+                        incomeFields.classList.add('hidden');
+                        expenseFields.classList.remove('hidden');
+                        paymentMethodSelect.removeAttribute('required'); // Remove required for expenses
+                    }
+                });
+            });
+
+            // Initial state based on default selected radio
+            if (document.getElementById('typeIncome').checked) {
+                incomeFields.classList.remove('hidden');
+                expenseFields.classList.add('hidden');
+                paymentMethodSelect.setAttribute('required', 'required');
+            } else {
+                incomeFields.classList.add('hidden');
+                expenseFields.classList.remove('hidden');
+                paymentMethodSelect.removeAttribute('required');
+            }
+
+            document.getElementById('transactionForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const transactionId = document.getElementById('transactionId').value;
+                const type = document.querySelector('input[name="transactionType"]:checked').value;
+                const name = document.getElementById('name').value;
+                const amount = parseFloat(document.getElementById('amount').value);
+                let transactionData = { type, name, amount };
+
+                if (type === 'Inkomsten') {
+                    const paymentMethod = document.getElementById('paymentMethod').value;
+                    const treatment = document.getElementById('treatment').value;
+                    transactionData = { ...transactionData, paymentMethod, treatment };
+                }
+
+                if (transactionId) {
+                    await updateTransaction(transactionId, transactionData);
+                } else {
+                    await saveTransaction(transactionData);
+                }
+            });
+
+            document.getElementById('cancelEdit').addEventListener('click', () => {
+                clearInputForm();
+                showPage('reportsPage');
+            });
+        };
+
+        // Function to clear the input form
+        window.clearInputForm = () => {
+            document.getElementById('transactionForm').reset();
+            document.getElementById('transactionId').value = '';
+            document.getElementById('formTitle').textContent = 'Nieuwe Transactie';
+            document.getElementById('cancelEdit').classList.add('hidden');
+            // Reset radio button to default (Inkomsten) and trigger change to hide/show fields correctly
+            document.getElementById('typeIncome').checked = true;
+            document.getElementById('typeIncome').dispatchEvent(new Event('change'));
+        };
+
+        // Function to pre-fill the form for editing
+        window.editTransaction = (id) => {
+            const transaction = transactions.find(t => t.id === id);
+            if (transaction) {
+                document.getElementById('transactionId').value = transaction.id;
+                document.getElementById('formTitle').textContent = 'Transactie Bewerken';
+                document.getElementById('cancelEdit').classList.remove('hidden');
+
+                // Set transaction type radio button
+                if (transaction.type === 'Inkomsten') {
+                    document.getElementById('typeIncome').checked = true;
+                } else {
+                    document.getElementById('typeExpense').checked = true;
+                }
+                // Trigger change event to update visible fields
+                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(new Event('change'));
+
+                document.getElementById('name').value = transaction.name;
+                document.getElementById('amount').value = transaction.amount;
+
+                if (transaction.type === 'Inkomsten') {
+                    document.getElementById('treatment').value = transaction.treatment || '';
+                    document.getElementById('paymentMethod').value = transaction.paymentMethod || '';
+                }
+                showPage('inputPage');
+            }
+        };
+
+        // --- Reports Page Logic ---
+        window.renderReportsTable = (filteredData = null) => {
+            const tableBody = document.getElementById('reportsTableBody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            const dataToRender = filteredData || transactions;
+
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-gray-500">Geen transacties gevonden.</td></tr>`;
+                return;
+            }
+
+            dataToRender.forEach(t => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 hover:bg-yellow-50';
+                const date = t.date ? new Date(t.date.seconds * 1000).toLocaleDateString('nl-BE') : 'N/A';
+                const amountClass = t.type === 'Inkomsten' ? 'text-green-600' : 'text-red-600';
+                const amountSign = t.type === 'Inkomsten' ? '+' : '-';
+
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-sm">${date}</td>
+                    <td class="py-3 px-4 text-sm">${t.type}</td>
+                    <td class="py-3 px-4 text-sm">${t.name}</td>
+                    <td class="py-3 px-4 text-sm">${t.type === 'Inkomsten' ? (t.treatment || '-') : '-'}</td>
+                    <td class="py-3 px-4 text-sm ${amountClass}">${amountSign} €${t.amount.toFixed(2)}</td>
+                    <td class="py-3 px-4 text-sm">${t.type === 'Inkomsten' ? (t.paymentMethod || '-') : '-'}</td>
+                    <td class="py-3 px-4 text-sm text-right">
+                        <button onclick="editTransaction('${t.id}')" class="text-blue-600 hover:text-blue-800 mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.38-2.827-2.828z" />
+                            </svg>
+                        </button>
+                        <button onclick="deleteTransaction('${t.id}')" class="text-red-600 hover:text-red-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        };
+
+        window.filterReports = () => {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            let filtered = transactions;
+
+            if (startDate) {
+                const start = new Date(startDate);
+                filtered = filtered.filter(t => t.date.toDate() >= start);
+            }
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999); // Include entire end day
+                filtered = filtered.filter(t => t.date.toDate() <= end);
+            }
+
+            renderReportsTable(filtered);
+        };
+
+        // --- Export Logic ---
+        // Include SheetJS library for XLSX export
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+        script.onload = () => {
+            console.log("SheetJS loaded.");
+        };
+        document.head.appendChild(script);
+
+        window.exportToXLSX = () => {
+            const table = document.getElementById('reportsTable');
+            const ws = XLSX.utils.table_to_sheet(table);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Kasboek Rapport");
+            XLSX.writeFile(wb, "Yasmine_Kasboek_Rapport.xlsx");
+            showMessage('Rapport geëxporteerd naar XLSX!', 'success');
+        };
+
+        window.exportToCSV = () => {
+            const table = document.getElementById('reportsTable');
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll('td, th');
+                for (let j = 0; j < cols.length -1; j++) { // Exclude the last column (actions)
+                    let text = cols[j].innerText.replace(/"/g, '""'); // Handle double quotes
+                    row.push(`"${text}"`); // Enclose in double quotes
+                }
+                csv.push(row.join(';')); // Use semicolon as separator for Dutch locale
+            }
+
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(csvFile);
+            downloadLink.download = "Yasmine_Kasboek_Rapport.csv";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            showMessage('Rapport geëxporteerd naar CSV!', 'success');
+        };
+
+        // Initial setup when the window loads
+        window.onload = () => {
+            setupInputPage();
+            showPage('indexPage'); // Start on the index page
+            // Display user ID for debugging/identification
+            const userIdDisplay = document.getElementById('userIdDisplay');
+            if (userIdDisplay) {
+                userIdDisplay.textContent = `Gebruikers ID: ${userId}`;
+            }
+        };
+    </script>
+</body>
+</html>
