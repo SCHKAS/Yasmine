@@ -43,7 +43,7 @@
             <div id="indexPage" class="page flex flex-col items-center justify-center space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
                     <!-- Kasboek Button -->
-                    <button onclick="console.log('Kasboek button clicked'); window.showPage('inputPage')" class="card-button flex flex-col items-center justify-center p-8 bg-yellow-200 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                    <button id="kasboekButton" class="card-button flex flex-col items-center justify-center p-8 bg-yellow-200 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-yellow-800 mb-4" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
                             <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 110-2h1a1 1 0 110 2H4zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
@@ -52,7 +52,7 @@
                     </button>
 
                     <!-- Rapporten Button -->
-                    <button onclick="console.log('Rapporten button clicked'); window.showPage('reportsPage')" class="card-button flex flex-col items-center justify-center p-8 bg-yellow-200 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                    <button id="rapportenButton" class="card-button flex flex-col items-center justify-center p-8 bg-yellow-200 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-yellow-800 mb-4" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                             <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
@@ -123,7 +123,7 @@
 
                     <!-- Action Buttons -->
                     <div class="flex justify-end space-x-4 pt-4">
-                        <button type="button" onclick="window.showPage('indexPage')"
+                        <button type="button" id="backToIndexFromInput"
                                 class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-md shadow-sm hover:bg-gray-300 transition-colors duration-200">
                             Terug
                         </button>
@@ -151,17 +151,17 @@
                         <label for="endDate" class="text-gray-700 font-medium whitespace-nowrap">Tot:</label>
                         <input type="date" id="endDate"
                                class="px-3 py-2 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 text-sm">
-                        <button onclick="window.filterReports()"
+                        <button id="filterReportsButton"
                                 class="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-md shadow-sm hover:bg-yellow-700 transition-colors duration-200 w-full sm:w-auto">
                             Filter
                         </button>
                     </div>
                     <div class="flex space-x-2 w-full sm:w-auto justify-end">
-                        <button onclick="window.exportToXLSX()"
+                        <button id="exportXLSXButton"
                                 class="px-4 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 transition-colors duration-200">
                             Export XLSX
                         </button>
-                        <button onclick="window.exportToCSV()"
+                        <button id="exportCSVButton"
                                 class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 transition-colors duration-200">
                             Export CSV
                         </button>
@@ -190,7 +190,7 @@
 
                 <!-- Back to Home Button -->
                 <div class="mt-6 text-center">
-                    <button onclick="window.showPage('indexPage')"
+                    <button id="backToIndexFromReports"
                             class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-md shadow-sm hover:bg-gray-300 transition-colors duration-200">
                         Terug naar Home
                     </button>
@@ -322,6 +322,8 @@
             }
         };
 
+        // --- UI Logic ---
+
         // Function to show a specific page
         window.showPage = (pageId) => {
             document.querySelectorAll('.page').forEach(page => {
@@ -441,7 +443,7 @@
                     document.getElementById('typeExpense').checked = true;
                 }
                 // Trigger change event to update visible fields
-                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(New Event('change'));
+                document.querySelector('input[name="transactionType"]:checked').dispatchEvent(new Event('change')); // Corrected: new Event
 
                 document.getElementById('name').value = transaction.name;
                 document.getElementById('amount').value = transaction.amount;
@@ -589,6 +591,26 @@
                     userIdDisplay.textContent = `Gebruikers ID: ${userId}`;
                 }
             });
+
+            // Attach event listeners to buttons after the DOM is loaded
+            document.getElementById('kasboekButton').addEventListener('click', () => {
+                console.log('Kasboek button clicked (via event listener)');
+                window.showPage('inputPage');
+            });
+            document.getElementById('rapportenButton').addEventListener('click', () => {
+                console.log('Rapporten button clicked (via event listener)');
+                window.showPage('reportsPage');
+            });
+            document.getElementById('backToIndexFromInput').addEventListener('click', () => {
+                window.showPage('indexPage');
+            });
+            document.getElementById('backToIndexFromReports').addEventListener('click', () => {
+                window.showPage('indexPage');
+            });
+            document.getElementById('filterReportsButton').addEventListener('click', window.filterReports);
+            document.getElementById('exportXLSXButton').addEventListener('click', window.exportToXLSX);
+            document.getElementById('exportCSVButton').addEventListener('click', window.exportToCSV);
+
 
             window.setupInputPage();
             window.showPage('indexPage'); // Start on the index page
